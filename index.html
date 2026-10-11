@@ -390,11 +390,16 @@ var BASE = 'libri/';
       '<label>' + t('age') + '<select id="pa">' + [3,4,5,6,7,8].map(function(a){ return '<option value="' + a + '"' + (a === st.age ? ' selected' : '') + '>' + a + ' ' + t('years') + '</option>'; }).join('') + '</select></label>' +
       '<label>' + t('sLang') + '<select id="ps">' + langOpts(st.story) + '</select></label>' +
       '<label>' + t('wLang') + '<select id="pw">' + langOpts(st.word, st.story) + '</select></label>' +
-      '<p class="note">' + t('parent') + '</p><button>' + t('saveB') + ' 💛</button><button type="button" class="soft" id="guide">📖 ' + (GUIDA[ui()] || GUIDA.it).btn + '</button><button type="button" class="soft" id="reset">' + t('reset') + '</button></form>';
+      '<p class="note">' + t('parent') + '</p><p class="note" id="saved" style="text-align:center;min-height:1.4em;color:#22a07a"></p><button type="button" class="soft" id="guide">📖 ' + (GUIDA[ui()] || GUIDA.it).btn + '</button><button type="button" class="soft" id="reset">' + t('reset') + '</button></form>';
     var pick = st.avatar;
-    document.querySelectorAll('[data-av]').forEach(function(el){ el.onclick = function(){ pick = el.dataset.av; document.querySelectorAll('[data-av]').forEach(function(x){ x.setAttribute('aria-pressed', x === el); }); }; });
-    $('ps').onchange = function(){ var s = $('ps').value, w = $('pw').value; if (w === s) w = Object.keys(LN).find(function(k){ return k !== s; }); var old = st.story; st.story = s; $('pw').innerHTML = langOpts(w, s); st.story = old; };
-    $('pf').onsubmit = function(e){ e.preventDefault(); var n = $('pn').value.trim(); if (n) st.name = n; st.age = +$('pa').value; st.avatar = pick; st.story = $('ps').value; st.word = $('pw').value; if (st.word === st.story) st.word = st.story === 'ING' ? 'ITA' : 'ING'; st.example = false; save(); confetti(); tab = 'home'; draw(); };
+    var savedT;
+    function saved(){ st.example = false; save(); var el = $('saved'); if (!el) return; el.textContent = '✓ ' + ({it:'Salvato',en:'Saved',es:'Guardado',fr:'Enregistré'}[ui()] || '✓'); clearTimeout(savedT); savedT = setTimeout(function(){ if ($('saved')) $('saved').textContent = ''; }, 1500); }
+    document.querySelectorAll('[data-av]').forEach(function(el){ el.onclick = function(){ st.avatar = el.dataset.av; document.querySelectorAll('[data-av]').forEach(function(x){ x.setAttribute('aria-pressed', x === el); }); pop(el); saved(); }; });
+    $('pn').oninput = function(){ var n = $('pn').value.trim(); if (n){ st.name = n; saved(); } };
+    $('pa').onchange = function(){ st.age = +$('pa').value; saved(); };
+    $('ps').onchange = function(){ st.story = $('ps').value; if (st.word === st.story) st.word = Object.keys(LN).find(function(k){ return k !== st.story; }); saved(); var y = window.scrollY; draw(); window.scrollTo(0, y); saved(); };
+    $('pw').onchange = function(){ st.word = $('pw').value; saved(); };
+    $('pf').onsubmit = function(e){ e.preventDefault(); };
     $('guide').onclick = function(){ guide(0); };
     var r = $('reset'), armed = false; r.onclick = function(){ if (!armed){ armed = true; r.textContent = t('resetC'); return; } st.read = []; st.words = []; st.nights = []; st.game = {}; save(); tab = 'home'; draw(); };
   }
