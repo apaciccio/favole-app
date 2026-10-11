@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Favole">
+<meta name="theme-color" content="#8f7cf0">
+<link rel="apple-touch-icon" href="icona.png">
+<link rel="icon" href="icona.png">
+<title>Favole della Sera</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap">
+<style>
+/* Layout: a phone app for little ones and their parents. Pastel bedtime sky (lilac to peach), fluffy cloud edges, cream bubbly cards, a big floating moon mascot, a fixed bottom tab bar. Reader and morning game open full screen. Single committed look: a cuddly pastel storybook app. */
+:root{
+  color-scheme: light;
+  --sky-1:#8f7cf0;   /* lilac top */
+  --sky-2:#c3a8ff;   /* soft violet */
+  --sky-3:#ffc6d9;   /* pink horizon */
+  --paper:#fffaf3;
+  --lilac:#f1eaff;
+  --ink:#3a2f7a;
+  --ink-2:#7a70b3;
+  --butter:#ffd66b;
+  --butter-d:#f0b93a;
+  --pink:#ff9fc8;
+  --mint:#86e3c6;
+  --peach:#ffbf9e;
+  --baby:#a9d8ff;
+  --display:"Fredoka", "Trebuchet MS", sans-serif;
+  --body:"Nunito", "Segoe UI", sans-serif;
+  --shadow:0 12px 30px rgba(74,52,160,.20);
+}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{margin:0;background:linear-gradient(180deg,var(--sky-1) 0%,var(--sky-2) 45%,var(--sky-3) 100%) fixed;background-color:var(--sky-1);color:var(--ink);font:700 16px/1.45 var(--body);padding-inline:16px;padding-block:10px calc(104px + env(safe-area-inset-bottom,0px));-webkit-tap-highlight-color:transparent}
+.sky{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.sky i{position:absolute;font-style:normal;color:#fff;opacity:.85;font-size:12px}
+.sky .cl{position:absolute;opacity:.55}
+@media (prefers-reduced-motion:no-preference){
+  .sky i{animation:tw 3s ease-in-out infinite}
+  .sky .cl{animation:drift 40s linear infinite}
+  .float{animation:float 4s ease-in-out infinite}
+  .wiggle{animation:wig 2.8s ease-in-out infinite}
+  .blink{animation:blink 5s infinite}
+}
+@keyframes tw{50%{opacity:.2;transform:scale(.6)}}
+@keyframes drift{from{transform:translateX(-30vw)}to{transform:translateX(130vw)}}
+@keyframes float{50%{transform:translateY(-8px) rotate(-2deg)}}
+@keyframes wig{0%,86%,100%{transform:rotate(0)}89%{transform:rotate(-3deg) scale(1.03)}93%{transform:rotate(3deg) scale(1.03)}}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+.app{position:relative;z-index:1;max-width:460px;margin-inline:auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance}
+p{margin:0}
+button{font:700 17px var(--display);border:0;border-radius:99px;padding:14px 22px;cursor:pointer;color:var(--ink);background:var(--butter);box-shadow:0 6px 0 var(--butter-d);transition:transform .12s, box-shadow .12s}
+button:active{transform:translateY(4px) scale(.98);box-shadow:0 2px 0 var(--butter-d)}
+button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+button:disabled{opacity:.4}
+.soft{background:var(--lilac);box-shadow:0 5px 0 #d8cbff}
+.soft:active{box-shadow:0 1px 0 #d8cbff}
+.pinkbtn{background:var(--pink);box-shadow:0 6px 0 #e77bab;color:#fff}
+.round{width:48px;height:48px;padding:0;display:grid;place-items:center;font-size:20px;background:#fff;box-shadow:0 5px 0 #dcd2ff}
+
+/* header */
+.hero{position:relative;display:flex;align-items:center;gap:6px;padding-top:40px}
+.hero .moon{width:104px;height:104px;flex:none}
+.bubble{position:relative;background:#fff;border-radius:26px;padding:12px 16px;font:700 17px/1.3 var(--display);box-shadow:var(--shadow)}
+.bubble::before{content:"";position:absolute;left:-9px;bottom:16px;border:10px solid transparent;border-right-color:#fff;border-left:0}
+.bubble b{color:#ff6fae}
+.mini{font:700 13px var(--body);color:#fff;text-align:center;opacity:.95}
+
+/* story card */
+.card{position:relative;background:var(--paper);border-radius:34px;box-shadow:var(--shadow);padding:12px}
+.cover{position:relative;border-radius:26px;overflow:hidden}
+.cover img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover}
+.tagtop{position:absolute;left:12px;top:12px;background:#fff;color:var(--ink);font:700 14px var(--display);padding:7px 13px;border-radius:99px;box-shadow:0 4px 0 #e8e0ff}
+.stk{position:absolute;font-size:30px;filter:drop-shadow(0 3px 0 rgba(0,0,0,.08))}
+.card .in{padding:14px 8px 6px;display:flex;flex-direction:column;gap:12px;text-align:center;align-items:center}
+.card h2{font-size:26px;line-height:1.1}
+.pills{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.pill{font:700 13px var(--display);padding:6px 12px;border-radius:99px;background:var(--lilac);color:var(--ink-2)}
+.wbar{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.wb{font:700 14px var(--display);padding:6px 12px;border-radius:14px;transform:rotate(var(--r,0deg));box-shadow:0 3px 0 rgba(58,47,122,.10)}
+.c0{background:#ffe9a6;--r:-3deg}.c1{background:#ffd2e6;--r:2deg}.c2{background:#c8f2e4;--r:-1deg}.c3{background:#d4ebff;--r:3deg}.c4{background:#ffdccb;--r:-2deg}.c5{background:#e7dcff;--r:1deg}
+.go{width:100%;font-size:21px;padding:17px}
+
+/* stats */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{border-radius:26px;padding:12px 6px;text-align:center;box-shadow:var(--shadow);min-width:0;background:#fff}
+.tile .e{font-size:28px;line-height:1}
+.tile b{display:block;font:700 28px/1.1 var(--display);font-variant-numeric:tabular-nums}
+.tile span{font:800 12px var(--body);color:var(--ink-2)}
+.tile.a{background:#fff2c4}.tile.b{background:#ffe1ee}.tile.c{background:#d9f6ec}
+.sun{display:flex;align-items:center;gap:12px;background:linear-gradient(120deg,#fff3c2,#ffd7c2);border-radius:28px;padding:14px;box-shadow:var(--shadow)}
+.sun .ico{font-size:40px}
+.sun div{flex:1;min-width:0}
+.sun b{font:700 18px var(--display);display:block}
+.sun p{font:700 14px var(--body);color:var(--ink-2)}
+.sun button{padding:10px 18px;font-size:16px}
+.sec{color:#fff;font-size:24px;text-shadow:0 2px 0 rgba(74,52,160,.25)}
+.sub{color:#fff;font:700 14px var(--body);margin-top:-8px;opacity:.95}
+
+/* library */
+.cats{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;margin:0 -16px 6px;padding-inline:16px;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cats button{flex:none;font:700 15px var(--display);padding:9px 14px;border-radius:99px;background:rgba(255,255,255,.85);color:var(--ink);box-shadow:0 4px 0 #dcd2ff;white-space:nowrap}
+.cats button[aria-pressed=true]{background:var(--butter);box-shadow:0 4px 0 var(--butter-d)}
+.shelf{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.book{position:relative;background:#fff;border-radius:26px;padding:8px 8px 12px;box-shadow:0 7px 0 rgba(74,52,160,.13);text-align:center;color:var(--ink);display:flex;flex-direction:column;gap:8px}
+.book:active{box-shadow:0 3px 0 rgba(74,52,160,.13)}
+.book img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:20px;display:block}
+.book span{font:700 14px/1.2 var(--display);padding-inline:4px}
+.book .ok{position:absolute;right:12px;top:12px;width:30px;height:30px;border-radius:50%;background:var(--mint);display:grid;place-items:center;font-size:15px;box-shadow:0 3px 0 #5fc7a6}
+.book.new{outline:4px dashed #fff;outline-offset:-2px}
+
+/* album */
+.prog-album{background:#fff;border-radius:22px;padding:12px 14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}
+.prog-album b{font:700 16px var(--display)}
+.track{height:16px;background:var(--lilac);border-radius:99px;overflow:hidden}
+.track i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--butter));border-radius:99px}
+.album{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sticker{aspect-ratio:1;border-radius:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font:700 17px var(--display);color:var(--ink);box-shadow:0 5px 0 rgba(58,47,122,.12);transform:rotate(var(--r,0deg))}
+.sticker small{font:800 11px var(--body);color:var(--ink-2)}
+.sticker.lock{background:rgba(255,255,255,.35);color:rgba(255,255,255,.95);box-shadow:none;border:3px dashed rgba(255,255,255,.7);font-size:26px;transform:none}
+.pop{animation:pop .5s cubic-bezier(.3,1.7,.5,1)}
+@keyframes pop{40%{transform:scale(1.18) rotate(4deg)}}
+
+/* profile */
+.form{background:var(--paper);border-radius:32px;padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px}
+.form label{font:700 15px var(--display);color:var(--ink-2);display:flex;flex-direction:column;gap:6px}
+.form input,.form select{font:700 19px var(--display);padding:12px 16px;border-radius:20px;border:3px solid #ece4ff;background:#fff;color:var(--ink)}
+.avatars{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.avatars button{font-size:32px;aspect-ratio:1;padding:0;background:var(--lilac);box-shadow:0 4px 0 #d8cbff;border-radius:22px}
+.avatars button[aria-pressed=true]{background:var(--butter);box-shadow:0 4px 0 var(--butter-d)}
+.note{font:700 13px var(--body);color:var(--ink-2)}
+
+/* tab bar */
+.tabs{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:5;display:flex;justify-content:center}
+.tabs nav{display:grid;grid-template-columns:repeat(4,1fr);width:100%;max-width:436px;background:#fff;border-radius:30px;padding:8px;box-shadow:0 10px 30px rgba(74,52,160,.28)}
+.tabs button{background:none;box-shadow:none;border-radius:22px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:0;font:700 12px var(--display);color:var(--ink-2)}
+.tabs button span{font-size:24px;line-height:1.15;transition:transform .25s cubic-bezier(.3,1.7,.5,1)}
+.tabs button[aria-current=page]{background:var(--lilac);color:var(--ink)}
+.tabs button[aria-current=page] span{transform:translateY(-3px) scale(1.2)}
+
+/* layers */
+.layer{position:fixed;inset:0;z-index:10;overflow:auto;padding:calc(12px + env(safe-area-inset-top,0px)) 16px calc(24px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,var(--sky-1),var(--sky-2) 55%,var(--sky-3)) fixed;background-color:var(--sky-1)}
+.layer.day{background:linear-gradient(180deg,#ffd27e,#ffe7c4 60%,#fff4e0) fixed;background-color:#ffd27e}
+.layer .inner{max-width:460px;margin-inline:auto;display:flex;flex-direction:column;gap:14px}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.path{flex:1;position:relative;height:30px;display:flex;align-items:center}
+.path .line{position:absolute;left:8px;right:8px;height:8px;background:rgba(255,255,255,.45);border-radius:99px}
+.path .fill{position:absolute;left:8px;height:8px;background:#fff;border-radius:99px;transition:width .4s}
+.path .me{position:absolute;font-size:24px;transform:translateX(-50%);transition:left .4s cubic-bezier(.3,1.5,.5,1)}
+.frame{position:relative;background:#fff;border-radius:36px;padding:10px;box-shadow:var(--shadow)}
+.frame img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:28px;display:block;max-width:100%}
+.frame .s1{left:-8px;top:-10px;transform:rotate(-14deg)}.frame .s2{right:-8px;bottom:-12px;transform:rotate(12deg)}
+.slide{animation:slide .4s cubic-bezier(.3,1.3,.5,1)}
+@keyframes slide{from{opacity:0;transform:translateX(30px) rotate(1deg)}}
+.paper{background:var(--paper);border-radius:32px;padding:18px 20px;box-shadow:var(--shadow)}
+.txt{font:700 21px/1.6 var(--body);color:var(--ink)}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+.magic{min-width:0;margin-left:4px;display:flex;align-items:center;gap:12px;background:#ffe9a6;border-radius:26px;padding:10px 16px;box-shadow:0 6px 0 #f1c95a;text-align:left;transform:rotate(-1.5deg)}
+.magic:active{box-shadow:0 2px 0 #f1c95a}
+.magic .ico{font-size:30px}
+.magic small{display:block;font:800 11px var(--body);letter-spacing:.06em;text-transform:uppercase;color:#b2861a}
+.magic b{font:700 24px/1.1 var(--display)}
+.magic em{font:700 15px var(--body);font-style:normal;color:var(--ink-2)}
+.listen{width:64px;height:64px;padding:0;border-radius:50%;font-size:26px;background:var(--pink);box-shadow:0 6px 0 #e77bab}
+.listen[aria-pressed=true]{background:var(--mint);box-shadow:0 6px 0 #5fc7a6}
+.nav{display:grid;grid-template-columns:64px 1fr;gap:10px}
+.nav .back{padding:0;background:#fff;box-shadow:0 6px 0 #dcd2ff;font-size:22px}
+.center{text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px 6px}
+.center .moon{width:170px;height:170px}
+.center h2{color:#fff;font-size:32px;text-shadow:0 3px 0 rgba(74,52,160,.25)}
+.center p{color:#fff;font:700 17px var(--body);max-width:30ch}
+.layer.day .center h2,.layer.day .center p{color:var(--ink);text-shadow:none}
+.qcard{background:var(--paper);border-radius:28px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px}
+.qcard h3{font-size:19px}
+.reveal{align-self:flex-start;padding:9px 16px;font-size:15px}
+.ans{font:700 17px var(--display);color:#22a07a}
+.opts{display:flex;flex-direction:column;gap:12px}
+.opts button{text-align:left;background:#fff;box-shadow:0 6px 0 #f1dcc0;font-size:19px;border-radius:24px;padding:16px 20px}
+.opts button:disabled{opacity:.55}
+.opts button.ok,.opts button.no{opacity:1}
+.opts button.ok{background:#c8f2e4;box-shadow:0 6px 0 #86d6bb}
+.opts button.no{background:#ffd5df;box-shadow:0 6px 0 #f2a5b8;animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.big{font:700 24px/1.35 var(--display)}
+.numpad{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.numpad button{padding:14px 0;font-size:24px;background:#fff;box-shadow:0 5px 0 #f1dcc0;border-radius:20px}
+.fb{font:700 22px var(--display);text-align:center;min-height:30px}
+.starsrow{font-size:46px;letter-spacing:6px}
+.zz{position:absolute;font:700 22px var(--display);color:#fff}
+@media (prefers-reduced-motion:no-preference){.zz{animation:zz 2.4s ease-in infinite}}
+@keyframes zz{0%{opacity:0;transform:translate(0,0) scale(.6)}30%{opacity:1}100%{opacity:0;transform:translate(26px,-60px) scale(1.2)}}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
+.confetti i{position:absolute;top:-30px;font-style:normal;font-size:26px;animation:fall 2.6s ease-in forwards}
+@keyframes fall{to{transform:translateY(112vh) rotate(600deg);opacity:.3}}
+.sparkle{position:fixed;pointer-events:none;z-index:31;font-size:22px;animation:spk .7s ease-out forwards}
+@keyframes spk{to{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
+.sound{position:absolute;right:0;top:0;font-size:15px;padding:8px 12px;background:rgba(255,255,255,.9);box-shadow:0 4px 0 #dcd2ff}
+@media (prefers-reduced-motion:reduce){.pop,.slide,.opts button.no,.confetti i,.sparkle{animation:none}}
+</style>
+</head>
+<body>
+
+<div class="sky" id="sky" aria-hidden="true"></div>
+<main class="app" id="app"></main>
+<div class="layer" id="layer" hidden><div class="inner" id="lin"></div></div>
+<div class="tabs" id="tabs"><nav>
+  <button data-tab="home" aria-current="page"><span>🌙</span>Stasera</button>
+  <button data-tab="lib"><span>📚</span>Storie</button>
+  <button data-tab="words"><span>⭐</span>Adesivi</button>
+  <button data-tab="me"><span>🧸</span>Io</button>
+</nav></div>
+
+<script>
+var BOOKS = [];
+var AUDW = {};
+var BASE = 'libri/';
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var KEY = 'favole-sera-app';
+  var st = {name:'Sofia', age:5, avatar:'🐰', story:'ITA', word:'ING', read:[], words:[], nights:[], example:true, game:{}, sound:true};
+  try { var raw = localStorage.getItem(KEY); if (raw) st = Object.assign(st, JSON.parse(raw)); } catch (e) {}
+  if (!st.langSet){ var nl = ((navigator.languages && navigator.languages[0]) || navigator.language || 'it').slice(0,2).toLowerCase(); st.story = {it:'ITA', en:'ING', es:'SP', fr:'FR'}[nl] || 'ING'; st.word = st.story === 'ING' ? 'SP' : 'ING'; st.langSet = true; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  // ---------- languages ----------
+  var LN = {ITA:{code:'it', flag:'🇮🇹', it:'Italiano', en:'Italian', es:'Italiano', fr:'Italien'}, ING:{code:'en', flag:'🇬🇧', it:'Inglese', en:'English', es:'Inglés', fr:'Anglais'}, SP:{code:'es', flag:'🇪🇸', it:'Spagnolo', en:'Spanish', es:'Español', fr:'Espagnol'}, FR:{code:'fr', flag:'🇫🇷', it:'Francese', en:'French', es:'Francés', fr:'Français'}};
+  var TX = {
+    it:{hi:'Ciao {n}', read:'Leggiamo insieme?', sleep:'Shh… {n} dorme. Domani nuova storia!', example:'Profilo di esempio · metti il nome in “Io”', tonight:'La storia di stasera', tomorrow:'Domani sera', min:'min', pages:'8 pagine', stk:'8 adesivi', go:'Leggiamo!', streak:'sere di fila', stickers:'adesivi', stories:'storie', mTitle:'Gioco del mattino', mSub:'Domande sulla storia di ieri, a colazione', play:'Gioca!', libT:'Le storie della nanna', libS:'{n} storie · una nuova ogni sera', albT:'L’album di {n}', albP:'{a} adesivi su {b}', albN:'Ogni storia letta regala 8 adesivi. Tocca un adesivo per sentirlo!', meT:'Io', name:'Come ti chiami?', animal:'Scegli il tuo animaletto', age:'Quanti anni hai?', years:'anni', sLang:'Lingua della storia', wLang:'Lingua delle parole magiche', parent:'Per mamma e papà: il nome resta solo su questo telefono.', saveB:'Salva', reset:'Ricomincia da zero', resetC:'Tocca ancora per cancellare tutto', forYou:'Questa storia è per {n}', intro:'Abbassa la luce e mettiti comodo. In ogni pagina c’è una parola magica in {l}: toccala e ascoltala!', start:'Cominciamo', magic:'Parola magica', next:'Avanti', fin:'Fine della storia', theEnd:'La fine', moral:'Cosa ci insegna la storia', q:'Domandina per {n}', reveal:'Scopri la risposta', tStk:'Gli adesivi di stasera', gn:'Buonanotte, {n}', sweet:'Sogni d’oro, {n}', plus:'+{x} adesivi nell’album', night1:'sera', nightN:'sere di fila', bfast:'Domattina a colazione c’è il gioco', nanna:'Nanna', lStory:'📖 La storia', lNum:'🔢 Numeri', ok:'Giusto!', was:'Era: ', g3:'Bravissimo!', g2:'Molto bene!', g1:'Bella prova!', r1:'risposta giusta su', rN:'risposte giuste su', done:'Fatto', tabs:['Stasera','Storie','Adesivi','Io'], snd:'Suoni', mute:'Muto', listen:'Ascolta la pagina', close:'Chiudi', locked:'Adesivo da scoprire'},
+    en:{hi:'Hi {n}', read:'Shall we read together?', sleep:'Shh… {n} is asleep. New story tomorrow!', example:'Sample profile · add the name in “Me”', tonight:'Tonight’s story', tomorrow:'Tomorrow night', min:'min', pages:'8 pages', stk:'8 stickers', go:'Let’s read!', streak:'nights in a row', stickers:'stickers', stories:'stories', mTitle:'Morning game', mSub:'Questions about last night’s story, at breakfast', play:'Play!', libT:'Bedtime stories', libS:'{n} stories · a new one every night', albT:'{n}’s album', albP:'{a} of {b} stickers', albN:'Every story you read gives 8 stickers. Tap a sticker to hear it!', meT:'Me', name:'What’s your name?', animal:'Pick your little animal', age:'How old are you?', years:'years', sLang:'Story language', wLang:'Magic words language', parent:'For parents: the name stays on this phone only.', saveB:'Save', reset:'Start over', resetC:'Tap again to erase everything', forYou:'This story is for {n}', intro:'Dim the lights and get cosy. Every page has a magic word in {l}: tap it and listen!', start:'Let’s start', magic:'Magic word', next:'Next', fin:'The end of the story', theEnd:'The end', moral:'What the story teaches', q:'A little question for {n}', reveal:'Show the answer', tStk:'Tonight’s stickers', gn:'Good night, {n}', sweet:'Sweet dreams, {n}', plus:'+{x} stickers in the album', night1:'night', nightN:'nights in a row', bfast:'Morning game at breakfast', nanna:'Sleep time', lStory:'📖 The story', lNum:'🔢 Numbers', ok:'Correct!', was:'It was: ', g3:'Amazing!', g2:'Well done!', g1:'Nice try!', r1:'right answer of', rN:'right answers of', done:'Done', tabs:['Tonight','Stories','Stickers','Me'], snd:'Sounds', mute:'Muted', listen:'Listen to the page', close:'Close', locked:'Sticker to discover'},
+    es:{hi:'Hola {n}', read:'¿Leemos juntos?', sleep:'Shh… {n} duerme. ¡Mañana otro cuento!', example:'Perfil de ejemplo · pon el nombre en “Yo”', tonight:'El cuento de esta noche', tomorrow:'Mañana por la noche', min:'min', pages:'8 páginas', stk:'8 pegatinas', go:'¡A leer!', streak:'noches seguidas', stickers:'pegatinas', stories:'cuentos', mTitle:'Juego de la mañana', mSub:'Preguntas sobre el cuento de anoche, en el desayuno', play:'¡Jugar!', libT:'Cuentos para dormir', libS:'{n} cuentos · uno nuevo cada noche', albT:'El álbum de {n}', albP:'{a} de {b} pegatinas', albN:'Cada cuento leído regala 8 pegatinas. ¡Toca una para escucharla!', meT:'Yo', name:'¿Cómo te llamas?', animal:'Elige tu animalito', age:'¿Cuántos años tienes?', years:'años', sLang:'Idioma del cuento', wLang:'Idioma de las palabras mágicas', parent:'Para mamá y papá: el nombre se queda solo en este teléfono.', saveB:'Guardar', reset:'Empezar de cero', resetC:'Toca otra vez para borrar todo', forYou:'Este cuento es para {n}', intro:'Baja la luz y ponte cómodo. En cada página hay una palabra mágica en {l}: ¡tócala y escúchala!', start:'Empezamos', magic:'Palabra mágica', next:'Siguiente', fin:'Fin del cuento', theEnd:'Fin', moral:'Lo que nos enseña el cuento', q:'Preguntita para {n}', reveal:'Ver la respuesta', tStk:'Las pegatinas de esta noche', gn:'Buenas noches, {n}', sweet:'Dulces sueños, {n}', plus:'+{x} pegatinas en el álbum', night1:'noche', nightN:'noches seguidas', bfast:'Mañana en el desayuno hay juego', nanna:'A dormir', lStory:'📖 El cuento', lNum:'🔢 Números', ok:'¡Correcto!', was:'Era: ', g3:'¡Genial!', g2:'¡Muy bien!', g1:'¡Buen intento!', r1:'respuesta correcta de', rN:'respuestas correctas de', done:'Hecho', tabs:['Esta noche','Cuentos','Pegatinas','Yo'], snd:'Sonidos', mute:'Silencio', listen:'Escuchar la página', close:'Cerrar', locked:'Pegatina por descubrir'},
+    fr:{hi:'Coucou {n}', read:'On lit ensemble ?', sleep:'Chut… {n} dort. Nouvelle histoire demain !', example:'Profil d’exemple · mets le prénom dans « Moi »', tonight:'L’histoire de ce soir', tomorrow:'Demain soir', min:'min', pages:'8 pages', stk:'8 autocollants', go:'On lit !', streak:'soirs de suite', stickers:'autocollants', stories:'histoires', mTitle:'Jeu du matin', mSub:'Des questions sur l’histoire d’hier, au petit-déjeuner', play:'Jouer !', libT:'Les histoires du soir', libS:'{n} histoires · une nouvelle chaque soir', albT:'L’album de {n}', albP:'{a} autocollants sur {b}', albN:'Chaque histoire lue offre 8 autocollants. Touche un autocollant pour l’écouter !', meT:'Moi', name:'Comment tu t’appelles ?', animal:'Choisis ton petit animal', age:'Quel âge as-tu ?', years:'ans', sLang:'Langue de l’histoire', wLang:'Langue des mots magiques', parent:'Pour les parents : le prénom reste seulement sur ce téléphone.', saveB:'Enregistrer', reset:'Tout recommencer', resetC:'Touche encore pour tout effacer', forYou:'Cette histoire est pour {n}', intro:'Baisse la lumière et installe-toi bien. Sur chaque page il y a un mot magique en {l} : touche-le et écoute-le !', start:'On commence', magic:'Mot magique', next:'Suivant', fin:'Fin de l’histoire', theEnd:'Fin', moral:'Ce que l’histoire nous apprend', q:'Petite question pour {n}', reveal:'Voir la réponse', tStk:'Les autocollants de ce soir', gn:'Bonne nuit, {n}', sweet:'Fais de beaux rêves, {n}', plus:'+{x} autocollants dans l’album', night1:'soir', nightN:'soirs de suite', bfast:'Demain matin, jeu au petit-déjeuner', nanna:'Dodo', lStory:'📖 L’histoire', lNum:'🔢 Nombres', ok:'Bravo !', was:'C’était : ', g3:'Génial !', g2:'Très bien !', g1:'Bel essai !', r1:'bonne réponse sur', rN:'bonnes réponses sur', done:'Fini', tabs:['Ce soir','Histoires','Autocollants','Moi'], snd:'Sons', mute:'Muet', listen:'Écouter la page', close:'Fermer', locked:'Autocollant à découvrir'}
+  };
+  function ui(){ return LN[st.story].code; }
+  function t(k, vars){ var s = TX[ui()][k]; if (vars) Object.keys(vars).forEach(function(v){ s = s.replace('{' + v + '}', vars[v]); }); return s; }
+  function ver(){ return st.story + '_' + st.word; }
+  function V(b){ return b.v[ver()] || b.v.ITA_ING || b.v[Object.keys(b.v)[0]]; }
+  function img(b, i){ return BASE + b.slug + '/p' + i + '.jpg'; }
+  function wordAud(w){ return AUDW[LN[st.word].code + '|' + w] || ''; }
+  function narr(b, i){ var c = LN[st.story].code; return (b.voce || []).indexOf(c) >= 0 ? BASE + b.slug + '/voce/' + c + '_' + i + '.m4a' : ''; }
+  function dkey(d){ return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate(); }
+  function streak(){ var n = 0, d = new Date(); while (st.nights.indexOf(dkey(d)) >= 0){ n++; d.setDate(d.getDate()-1); } return n; }
+  function tonight(){ return BOOKS.find(function(x){ return st.read.indexOf(x.slug) < 0; }) || BOOKS[st.read.length % BOOKS.length]; }
+  function mins(b){ var w = V(b).pagine.reduce(function(a, p){ return a + p.testo.split(/\s+/).length; }, 0); return Math.max(3, Math.round(w/110) + 2); }
+  function allWords(){ var out = []; BOOKS.forEach(function(b){ V(b).pagine.forEach(function(p){ if (!out.some(function(w){ return w.w === p.w; })) out.push({w:p.w, t:p.t}); }); }); return out; }
+  function myWords(){ var L = LN[st.word].code; return st.words.filter(function(w){ return w.l === L; }); }
+
+  // ---------- sound ----------
+  var cur = null, ac = null;
+  function play(src, onend){ if (!st.sound || !src) return null; stop(); try { cur = new Audio(src); cur.onended = function(){ cur = null; if (onend) onend(); }; var pr = cur.play(); if (pr && pr.catch) pr.catch(function(){}); } catch (e) { cur = null; } return cur; }
+  function stop(){ if (cur){ try { cur.pause(); } catch (e) {} cur = null; } }
+  function uiVoice(k){}
+  function blip(f, d){ if (!st.sound) return; try { if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)(); var o = ac.createOscillator(), g = ac.createGain(), tt = ac.currentTime; o.type = 'sine'; o.frequency.setValueAtTime(f, tt); o.frequency.exponentialRampToValueAtTime(f*1.6, tt + d); g.gain.setValueAtTime(0.12, tt); g.gain.exponentialRampToValueAtTime(0.001, tt + d); o.connect(g); g.connect(ac.destination); o.start(tt); o.stop(tt + d); } catch (e) {} }
+  document.addEventListener('click', function(e){ if (e.target.closest('button')) blip(660, 0.09); });
+
+  // ---------- art ----------
+  function moon(mood, cls){
+    var eyes = mood === 'sleep' ? '<path d="M43 60q6 6 12 0M67 60q6 6 12 0" stroke="#3a2f7a" stroke-width="4" fill="none" stroke-linecap="round"/>'
+      : '<g class="blink" style="transform-origin:61px 58px"><ellipse cx="49" cy="58" rx="5.5" ry="6.5" fill="#3a2f7a"/><ellipse cx="73" cy="58" rx="5.5" ry="6.5" fill="#3a2f7a"/><circle cx="51" cy="55.5" r="2" fill="#fff"/><circle cx="75" cy="55.5" r="2" fill="#fff"/></g>';
+    var mouth = mood === 'happy' ? '<path d="M52 71q9 11 18 0Z" fill="#ff7fa8" stroke="#3a2f7a" stroke-width="3" stroke-linejoin="round"/>' : '<path d="M54 72q7 6 14 0" stroke="#3a2f7a" stroke-width="3.5" fill="none" stroke-linecap="round"/>';
+    return '<svg class="moon ' + (cls || '') + '" viewBox="0 0 120 120" aria-hidden="true"><defs><radialGradient id="mg" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#fff2b0"/><stop offset="1" stop-color="#ffd25e"/></radialGradient></defs>' +
+      '<circle cx="61" cy="64" r="41" fill="url(#mg)"/><circle cx="44" cy="44" r="5" fill="#f5c64d" opacity=".7"/><circle cx="84" cy="84" r="4" fill="#f5c64d" opacity=".7"/><circle cx="82" cy="46" r="3" fill="#f5c64d" opacity=".7"/>' +
+      '<ellipse cx="41" cy="71" rx="8" ry="5" fill="#ff8fbf" opacity=".75"/><ellipse cx="82" cy="71" rx="8" ry="5" fill="#ff8fbf" opacity=".75"/>' + eyes + mouth +
+      '<path d="M24 42 Q50 -2 98 30 Q72 25 33 46Z" fill="#a98bff"/><path d="M50 22l3 4M68 18l2 5M80 22l1 4" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>' +
+      '<path d="M23 42 Q60 31 98 30" stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none"/><circle cx="101" cy="28" r="9" fill="#fff"/></svg>';
+  }
+  function cloud(w, c){ return '<svg viewBox="0 0 120 50" width="' + w + '" aria-hidden="true"><path d="M20 45 Q2 45 6 32 Q8 20 22 22 Q26 6 46 10 Q58 0 72 10 Q92 6 96 22 Q116 20 114 34 Q112 45 98 45Z" fill="' + c + '"/></svg>'; }
+  (function(){ var s = $('sky'), h = '', em = ['✦','✧','⋆','✦']; for (var i = 0; i < 26; i++) h += '<i style="left:' + (Math.random()*100) + '%;top:' + (Math.random()*60) + '%;animation-delay:' + (Math.random()*3).toFixed(2) + 's;font-size:' + (8 + Math.random()*12) + 'px">' + em[i % 4] + '</i>';
+    for (i = 0; i < 4; i++) h += '<span class="cl" style="top:' + (8 + i*22) + '%;animation-delay:' + (-i*11) + 's;animation-duration:' + (36 + i*8) + 's">' + cloud(110 + i*30, '#fff') + '</span>';
+    s.innerHTML = h; })();
+  function confetti(){ var c = document.createElement('div'); c.className = 'confetti'; var em = ['⭐','🌙','💛','✨','🌟','💜','🩷'];
+    for (var i = 0; i < 40; i++){ var e = document.createElement('i'); e.textContent = em[i % em.length]; e.style.left = Math.random()*100 + '%'; e.style.animationDelay = (Math.random()*0.9) + 's'; c.appendChild(e); }
+    document.body.appendChild(c); setTimeout(function(){ c.remove(); }, 3600); }
+  function sparkles(x, y){ var em = ['✨','⭐','💫','🌟']; for (var i = 0; i < 8; i++){ var s = document.createElement('span'); s.className = 'sparkle'; s.textContent = em[i % 4]; var a = i/8*6.283; s.style.left = (x-11) + 'px'; s.style.top = (y-11) + 'px'; s.style.setProperty('--dx', Math.cos(a)*70 + 'px'); s.style.setProperty('--dy', Math.sin(a)*70 + 'px'); document.body.appendChild(s); setTimeout(function(n){ return function(){ n.remove(); }; }(s), 800); } blip(880, 0.15); }
+  function cIdx(i){ return 'c' + (i % 6); }
+  function pop(el){ el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
+
+  // ---------- tabs ----------
+  var tab = 'home';
+  $('tabs').addEventListener('click', function(e){ var b = e.target.closest('[data-tab]'); if (!b) return; tab = b.dataset.tab; draw(); });
+  function draw(){
+    document.documentElement.lang = ui();
+    var labels = t('tabs');
+    document.querySelectorAll('[data-tab]').forEach(function(b, i){ b.lastChild.textContent = labels[i]; if (b.dataset.tab === tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+    ({home:home, lib:lib, words:words, me:me})[tab](); window.scrollTo(0, 0);
+  }
+  function soundBtn(){ return '<button class="sound" id="snd" aria-pressed="' + st.sound + '">' + (st.sound ? '🔊 ' + t('snd') : '🔇 ' + t('mute')) + '</button>'; }
+  function bindSound(){ var b = $('snd'); if (b) b.onclick = function(){ st.sound = !st.sound; save(); if (!st.sound) stop(); draw(); }; }
+
+  function home(){
+    var b = tonight(), d = V(b), done = st.nights.indexOf(dkey(new Date())) >= 0, last = st.read.length ? BOOKS.find(function(x){ return x.slug === st.read[st.read.length-1]; }) : null;
+    var h = '<div class="hero">' + moon(done ? 'sleep' : 'happy', 'float') + '<div class="bubble">' + (done ? t('sleep', {n:'<b>' + esc(st.name) + '</b>'}) + ' 💤' : t('hi', {n:'<b>' + esc(st.name) + '</b>'}) + ' ' + st.avatar + '<br>' + t('read')) + '</div>' + soundBtn() + '</div>';
+    if (st.example) h += '<p class="mini">' + t('example') + '</p>';
+    h += '<article class="card wiggle"><div class="cover"><img src="' + img(b, 1) + '" alt=""><span class="tagtop">' + (done ? '✨ ' + t('tomorrow') : '🌙 ' + t('tonight')) + '</span></div>' +
+      '<span class="stk" style="right:-6px;top:-12px;transform:rotate(14deg)">⭐</span><span class="stk" style="left:-10px;bottom:120px;transform:rotate(-10deg)">💛</span>' +
+      '<div class="in"><h2>' + esc(d.titolo) + '</h2><div class="pills"><span class="pill">⏱ ' + mins(b) + ' ' + t('min') + '</span><span class="pill">📖 ' + t('pages') + '</span><span class="pill">' + LN[st.word].flag + ' ' + t('stk') + '</span></div>' +
+      '<div class="wbar">' + d.pagine.map(function(p, i){ return '<span class="wb ' + cIdx(i) + '">' + esc(p.w) + '</span>'; }).join('') + '</div>' +
+      '<button class="go" id="go">' + t('go') + ' 🌙</button></div></article>';
+    h += '<div class="tiles"><div class="tile a"><div class="e">🔥</div><b>' + streak() + '</b><span>' + t('streak') + '</span></div><div class="tile b"><div class="e">⭐</div><b>' + myWords().length + '</b><span>' + t('stickers') + '</span></div><div class="tile c"><div class="e">📚</div><b>' + st.read.length + '</b><span>' + t('stories') + '</span></div></div>';
+    if (last) h += '<div class="sun"><span class="ico" aria-hidden="true">🌞</span><div><b>' + t('mTitle') + '</b><p>' + t('mSub') + '</p></div><button id="morning">' + t('play') + '</button></div>';
+    $('app').innerHTML = h; bindSound();
+    $('go').onclick = function(){ read(b, -1); };
+    if ($('morning')) $('morning').onclick = function(){ morning(last); };
+  }
+  var CATS = [
+    ['tutte','🌈',{it:'Tutte',en:'All',es:'Todos',fr:'Toutes'}],
+    ['amicizia','🤝',{it:'Amicizia',en:'Friendship',es:'Amistad',fr:'Amitié'}],
+    ['coraggio','🦁',{it:'Coraggio',en:'Courage',es:'Valentía',fr:'Courage'}],
+    ['emozioni','💗',{it:'Emozioni',en:'Feelings',es:'Emociones',fr:'Émotions'}],
+    ['gentilezza','🌷',{it:'Gentilezza',en:'Kindness',es:'Amabilidad',fr:'Gentillesse'}],
+    ['famiglia','🏡',{it:'Famiglia',en:'Family',es:'Familia',fr:'Famille'}],
+    ['natura','🐾',{it:'Natura e animali',en:'Nature & animals',es:'Naturaleza y animales',fr:'Nature et animaux'}],
+    ['avventura','✨',{it:'Avventura e magia',en:'Adventure & magic',es:'Aventura y magia',fr:'Aventure et magie'}],
+    ['imparare','🎒',{it:'Scuola e curiosità',en:'School & curiosity',es:'Escuela y curiosidad',fr:'École et curiosité'}],
+    ['nanna','😴',{it:'Nanna tranquilla',en:'Calm sleepy time',es:'Hora de dormir',fr:'Dodo tout doux'}]
+  ];
+  var cat = 'tutte';
+  function lib(){
+    var next = tonight().slug, have = CATS.filter(function(c){ return c[0] === 'tutte' || BOOKS.some(function(x){ return x.cat === c[0]; }); });
+    var list = BOOKS.filter(function(x){ return cat === 'tutte' || x.cat === cat; });
+    $('app').innerHTML = '<h2 class="sec">' + t('libT') + ' 📚</h2><p class="sub">' + t('libS', {n:BOOKS.length}) + '</p>' +
+      '<div class="cats" role="toolbar">' + have.map(function(c){ return '<button data-c="' + c[0] + '" aria-pressed="' + (c[0] === cat) + '">' + c[1] + ' ' + c[2][ui()] + '</button>'; }).join('') + '</div>' +
+      '<div class="shelf">' + list.map(function(x){ var d = st.read.indexOf(x.slug) >= 0;
+      return '<button class="book' + (x.slug === next ? ' new' : '') + '" data-b="' + x.slug + '"><img src="' + img(x, 1) + '" alt="">' + (d ? '<span class="ok">✓</span>' : '') + '<span>' + esc(V(x).titolo) + '</span></button>'; }).join('') + '</div>';
+    document.querySelectorAll('[data-b]').forEach(function(el){ el.onclick = function(){ read(BOOKS.find(function(x){ return x.slug === el.dataset.b; }), -1); }; });
+    document.querySelectorAll('[data-c]').forEach(function(el){ el.onclick = function(){ cat = el.dataset.c; lib(); }; });
+    var sel = document.querySelector('[data-c][aria-pressed=true]'); if (sel && sel.scrollIntoView) sel.scrollIntoView({inline:'center', block:'nearest'});
+  }
+  function words(){
+    var all = allWords(), have = myWords().map(function(w){ return w.w; });
+    var h = '<h2 class="sec">' + t('albT', {n:esc(st.name)}) + ' ' + LN[st.word].flag + '</h2><div class="prog-album"><b>' + t('albP', {a:have.length, b:all.length}) + '</b><div class="track"><i style="width:' + Math.round(have.length/all.length*100) + '%"></i></div><span class="note">' + t('albN') + '</span></div><div class="album">';
+    all.forEach(function(w, i){ var got = have.indexOf(w.w) >= 0; h += got ? '<button class="sticker ' + cIdx(i) + '" data-i="' + i + '">' + esc(w.w) + '<small>' + esc(w.t) + '</small></button>' : '<div class="sticker lock" aria-label="' + t('locked') + '">?</div>'; });
+    $('app').innerHTML = h + '</div>';
+    document.querySelectorAll('[data-i]').forEach(function(el){ el.onclick = function(){ play(wordAud(all[+el.dataset.i].w)); pop(el); }; });
+  }
+  var GUIDA = {
+    it:{btn:'Guida per mamma e papà', title:'Come funziona', skip:'Salta', next:'Avanti', go:'Iniziamo!', steps:[
+      ['🌙','Una storia ogni sera','Apri “Stasera”: la storia è già pronta. 8 pagine, circa 5 minuti. Leggetela insieme, oppure tocca 🎧 per farla leggere a una voce dolce.'],
+      ['✨','Le parole magiche','In ogni pagina c’è una parola in un’altra lingua. Toccatela per sentirla, poi ripetetela insieme: si impara giocando, senza fatica.'],
+      ['⭐','L’album degli adesivi','Alla fine toccate “Buonanotte”: le parole della storia diventano adesivi nell’album. Più sere di fila, più la serie cresce.'],
+      ['🌞','Il gioco del mattino','A colazione: qualche domanda sulla storia, sulle parole e piccoli conti. Così la storia si ricorda e si allena la testa.'],
+      ['🧸','Tutto su misura','In “Io” scegliete nome, animaletto, età, la lingua della storia e quella delle parole magiche. Nelle “Storie” trovate le categorie: coraggio, amicizia, nanna…'],
+      ['💛','Un consiglio','Luce bassa, volume basso, il telefono lo tiene il genitore. Il nome del bambino resta solo su questo telefono.']]},
+    en:{btn:'Guide for parents', title:'How it works', skip:'Skip', next:'Next', go:'Let’s start!', steps:[
+      ['🌙','A story every night','Open “Tonight”: the story is ready. 8 pages, about 5 minutes. Read it together, or tap 🎧 and a gentle voice reads it.'],
+      ['✨','Magic words','Every page has a word in another language. Tap it to hear it, then say it together: learning by playing, no effort.'],
+      ['⭐','The sticker album','At the end tap “Good night”: the story’s words become stickers in the album. More nights in a row, a longer streak.'],
+      ['🌞','The morning game','At breakfast: a few questions about the story, the words and some little sums. The story sticks, the mind trains.'],
+      ['🧸','Made to measure','In “Me” choose name, little animal, age, story language and magic-word language. In “Stories” you’ll find categories: courage, friendship, sleepy time…'],
+      ['💛','A tip','Low light, low volume, the parent holds the phone. Your child’s name stays only on this phone.']]},
+    es:{btn:'Guía para mamá y papá', title:'Cómo funciona', skip:'Saltar', next:'Siguiente', go:'¡Empezamos!', steps:[
+      ['🌙','Un cuento cada noche','Abre “Esta noche”: el cuento ya está listo. 8 páginas, unos 5 minutos. Leedlo juntos o toca 🎧 y una voz dulce lo lee.'],
+      ['✨','Las palabras mágicas','En cada página hay una palabra en otro idioma. Tocadla para escucharla y repetidla juntos: se aprende jugando.'],
+      ['⭐','El álbum de pegatinas','Al final tocad “Buenas noches”: las palabras del cuento se convierten en pegatinas. Más noches seguidas, más larga la racha.'],
+      ['🌞','El juego de la mañana','En el desayuno: preguntas sobre el cuento, las palabras y pequeñas sumas. Así el cuento se recuerda.'],
+      ['🧸','A vuestra medida','En “Yo” elegid nombre, animalito, edad, idioma del cuento y de las palabras mágicas. En “Cuentos” hay categorías: valentía, amistad, hora de dormir…'],
+      ['💛','Un consejo','Luz baja, volumen bajo, el móvil lo sostiene el adulto. El nombre del niño se queda solo en este teléfono.']]},
+    fr:{btn:'Guide pour les parents', title:'Comment ça marche', skip:'Passer', next:'Suivant', go:'On commence !', steps:[
+      ['🌙','Une histoire chaque soir','Ouvre « Ce soir » : l’histoire est prête. 8 pages, environ 5 minutes. Lisez-la ensemble ou touche 🎧 pour qu’une voix douce la lise.'],
+      ['✨','Les mots magiques','Sur chaque page il y a un mot dans une autre langue. Touchez-le pour l’écouter, puis répétez-le ensemble : on apprend en jouant.'],
+      ['⭐','L’album d’autocollants','À la fin, touchez « Bonne nuit » : les mots de l’histoire deviennent des autocollants. Plus de soirs de suite, plus la série grandit.'],
+      ['🌞','Le jeu du matin','Au petit-déjeuner : des questions sur l’histoire, les mots et de petits calculs. L’histoire reste en mémoire.'],
+      ['🧸','Sur mesure','Dans « Moi », choisissez prénom, petit animal, âge, langue de l’histoire et des mots magiques. Dans « Histoires », il y a des catégories : courage, amitié, dodo…'],
+      ['💛','Un conseil','Lumière douce, volume bas, c’est le parent qui tient le téléphone. Le prénom de l’enfant reste uniquement sur ce téléphone.']]}
+  };
+  function guide(k){
+    var G = GUIDA[ui()] || GUIDA.it; k = k || 0; var s = G.steps[k], last = k === G.steps.length - 1;
+    open('<div class="bar">' + X() + '<span style="font:700 16px var(--display);color:#fff">' + G.title + ' · ' + (k+1) + '/' + G.steps.length + '</span><span style="width:48px"></span></div>' +
+      '<div class="center" style="padding-top:20px"><div class="float" style="font-size:96px;line-height:1">' + s[0] + '</div><h2>' + s[1] + '</h2>' +
+      '<div class="qcard"><p style="font-size:18px;line-height:1.55;margin:0;color:var(--ink);text-align:left">' + s[2] + '</p></div>' +
+      '<div style="display:flex;gap:6px;justify-content:center;margin:14px 0">' + G.steps.map(function(_, j){ return '<span style="width:' + (j === k ? 22 : 9) + 'px;height:9px;border-radius:9px;background:' + (j === k ? 'var(--butter)' : 'rgba(255,255,255,.6)') + '"></span>'; }).join('') + '</div>' +
+      '<div class="nav">' + (k > 0 ? '<button class="back" id="gp" aria-label="←">←</button>' : '<button class="soft" id="gs" style="font-size:16px">' + G.skip + '</button>') + '<button id="gn" style="font-size:19px">' + (last ? G.go + ' ✨' : G.next + ' →') + '</button></div></div>');
+    function done(){ st.guida = true; save(); close(); }
+    $('x').onclick = done;
+    if ($('gs')) $('gs').onclick = done;
+    if ($('gp')) $('gp').onclick = function(){ guide(k-1); };
+    $('gn').onclick = function(){ if (last){ confetti(); done(); } else guide(k+1); };
+  }
+  function me(){
+    var av = ['🐰','🐻','🦊','🐱','🐼','🦄','🐸','🐨','🐯','🐷','🦁','🐧'];
+    function langOpts(sel, skip){ return Object.keys(LN).filter(function(k){ return k !== skip; }).map(function(k){ return '<option value="' + k + '"' + (k === sel ? ' selected' : '') + '>' + LN[k].flag + ' ' + LN[k][ui()] + '</option>'; }).join(''); }
+    $('app').innerHTML = '<h2 class="sec">' + t('meT') + ' 🧸</h2><form class="form" id="pf"><label>' + t('name') + '<input id="pn" value="' + esc(st.name) + '" maxlength="20" autocomplete="off"></label>' +
+      '<label>' + t('animal') + '<div class="avatars">' + av.map(function(a){ return '<button type="button" data-av="' + a + '" aria-pressed="' + (a === st.avatar) + '">' + a + '</button>'; }).join('') + '</div></label>' +
+      '<label>' + t('age') + '<select id="pa">' + [3,4,5,6,7,8].map(function(a){ return '<option value="' + a + '"' + (a === st.age ? ' selected' : '') + '>' + a + ' ' + t('years') + '</option>'; }).join('') + '</select></label>' +
+      '<label>' + t('sLang') + '<select id="ps">' + langOpts(st.story) + '</select></label>' +
+      '<label>' + t('wLang') + '<select id="pw">' + langOpts(st.word, st.story) + '</select></label>' +
+      '<p class="note">' + t('parent') + '</p><button>' + t('saveB') + ' 💛</button><button type="button" class="soft" id="guide">📖 ' + (GUIDA[ui()] || GUIDA.it).btn + '</button><button type="button" class="soft" id="reset">' + t('reset') + '</button></form>';
+    var pick = st.avatar;
+    document.querySelectorAll('[data-av]').forEach(function(el){ el.onclick = function(){ pick = el.dataset.av; document.querySelectorAll('[data-av]').forEach(function(x){ x.setAttribute('aria-pressed', x === el); }); }; });
+    $('ps').onchange = function(){ var s = $('ps').value, w = $('pw').value; if (w === s) w = Object.keys(LN).find(function(k){ return k !== s; }); var old = st.story; st.story = s; $('pw').innerHTML = langOpts(w, s); st.story = old; };
+    $('pf').onsubmit = function(e){ e.preventDefault(); var n = $('pn').value.trim(); if (n) st.name = n; st.age = +$('pa').value; st.avatar = pick; st.story = $('ps').value; st.word = $('pw').value; if (st.word === st.story) st.word = st.story === 'ING' ? 'ITA' : 'ING'; st.example = false; save(); confetti(); tab = 'home'; draw(); };
+    $('guide').onclick = function(){ guide(0); };
+    var r = $('reset'), armed = false; r.onclick = function(){ if (!armed){ armed = true; r.textContent = t('resetC'); return; } st.read = []; st.words = []; st.nights = []; st.game = {}; save(); tab = 'home'; draw(); };
+  }
+
+  // ---------- layers ----------
+  function open(html, day){ var L = $('layer'); L.className = 'layer' + (day ? ' day' : ''); $('lin').innerHTML = html; L.hidden = false; L.scrollTop = 0; $('tabs').hidden = true; }
+  function close(){ stop(); $('layer').hidden = true; $('tabs').hidden = false; draw(); }
+  function X(){ return '<button class="round" id="x" aria-label="' + t('close') + '">✕</button>'; }
+
+  function read(b, i){
+    stop(); var d = V(b);
+    if (i < 0){
+      open('<div class="bar">' + X() + '</div><div class="center">' + moon('happy', 'float') + '<h2>' + t('forYou', {n:esc(st.name)}) + ' ' + st.avatar + '</h2>' +
+        '<p>' + t('intro', {l:LN[st.word][ui()].toLowerCase()}) + '</p><button id="next" style="font-size:20px;padding:16px 30px">' + t('start') + ' ✨</button></div>');
+      $('x').onclick = close; $('next').onclick = function(){ uiVoice('via'); read(b, 0); }; return;
+    }
+    if (i >= d.pagine.length){ end(b); return; }
+    var p = d.pagine[i], pct = i/(d.pagine.length-1), nar = narr(b, i+1);
+    open('<div class="bar">' + X() + '<div class="path" aria-label="' + (i+1) + '/8"><span class="line"></span><span class="fill" style="width:calc((100% - 16px) * ' + pct + ')"></span><span class="me" style="left:calc(8px + (100% - 16px) * ' + pct + ')">' + st.avatar + '</span></div><span style="font:700 15px var(--display);color:#fff">' + (i+1) + '/8</span></div>' +
+      '<div class="frame slide"><img id="pic" src="' + img(b, i+1) + '" alt=""><span class="stk s1">⭐</span><span class="stk s2">🌙</span></div>' +
+      '<div class="paper slide"><p class="txt">' + esc(p.testo) + '</p></div>' +
+      '<div class="row2"><button class="magic" id="w"><span class="ico" aria-hidden="true">🔊</span><span><small>' + LN[st.word].flag + ' ' + t('magic') + '</small><b>' + esc(p.w) + '</b> <em>· ' + esc(p.t) + '</em></span></button>' +
+      (nar ? '<button class="listen" id="ls" aria-pressed="false" aria-label="' + t('listen') + '">🎧</button>' : '') + '</div>' +
+      '<div class="nav"><button class="back" id="prev" aria-label="←"' + (i === 0 ? ' disabled' : '') + '>←</button><button id="next" style="font-size:19px">' + (i === d.pagine.length-1 ? t('fin') + ' ✨' : t('next') + ' →') + '</button></div>');
+    $('x').onclick = close;
+    $('pic').onclick = function(e){ sparkles(e.clientX, e.clientY); };
+    $('w').onclick = function(){ play(wordAud(p.w)); pop($('w')); };
+    if ($('ls')) $('ls').onclick = function(){ var btn = $('ls'); if (btn.getAttribute('aria-pressed') === 'true'){ stop(); btn.setAttribute('aria-pressed', 'false'); btn.textContent = '🎧'; return; }
+      var a = play(nar, function(){ btn.setAttribute('aria-pressed', 'false'); btn.textContent = '🎧'; }); if (a){ btn.setAttribute('aria-pressed', 'true'); btn.textContent = '⏸'; } };
+    $('prev').onclick = function(){ read(b, i-1); };
+    $('next').onclick = function(){ read(b, i+1); };
+  }
+
+  function end(b){
+    var d = V(b), qs = d.quiz.slice(0, 2);
+    open('<div class="bar">' + X() + '<span style="font:700 18px var(--display);color:#fff">' + t('theEnd') + ' 🌟</span><span style="width:48px"></span></div>' +
+      '<div class="qcard"><h3>💛 ' + t('moral') + '</h3><p>' + esc(d.morale) + '</p></div>' +
+      qs.map(function(q, k){ return '<div class="qcard"><h3>💭 ' + t('q', {n:esc(st.name)}) + '</h3><p>' + esc(q.q) + '</p><button class="soft reveal" data-a="' + k + '">' + t('reveal') + '</button><span class="ans" id="a' + k + '" hidden>' + esc(q.o[q.a]) + ' ✓</span></div>'; }).join('') +
+      '<div class="qcard"><h3>🎁 ' + t('tStk') + '</h3><div class="wbar">' + d.pagine.map(function(p, i){ return '<button class="wb ' + cIdx(i) + '" data-w="' + i + '" style="border:0;padding:8px 13px">' + esc(p.w) + '</button>'; }).join('') + '</div></div>' +
+      '<button id="night" style="font-size:21px;padding:18px">' + t('gn', {n:esc(st.name)}) + ' 🌙</button>');
+    $('x').onclick = close;
+    document.querySelectorAll('[data-a]').forEach(function(el){ el.onclick = function(){ $('a' + el.dataset.a).hidden = false; el.hidden = true; }; });
+    document.querySelectorAll('#lin [data-w]').forEach(function(el){ el.onclick = function(){ play(wordAud(d.pagine[+el.dataset.w].w)); pop(el); }; });
+    $('night').onclick = function(){
+      var L = LN[st.word].code, before = myWords().length;
+      if (st.read.indexOf(b.slug) < 0) st.read.push(b.slug);
+      d.pagine.forEach(function(p){ if (!st.words.some(function(w){ return w.w === p.w && w.l === L; })) st.words.push({w:p.w, t:p.t, l:L}); });
+      if (st.nights.indexOf(dkey(new Date())) < 0) st.nights.push(dkey(new Date()));
+      save(); confetti(); uiVoice('nanna');
+      var sk = streak();
+      open('<div class="center" style="padding-top:56px"><div style="position:relative">' + moon('sleep', 'float') + '<span class="zz" style="right:6px;top:10px">z</span><span class="zz" style="right:-8px;top:0;animation-delay:.8s">Z</span></div><h2>' + t('sweet', {n:esc(st.name)}) + '</h2><p>' + t('plus', {x:myWords().length - before}) + ' ⭐<br>' + sk + ' ' + (sk === 1 ? t('night1') : t('nightN')) + ' 🔥</p><p>' + t('bfast') + ' ☀️</p><button id="ok">' + t('nanna') + ' 💤</button></div>');
+      $('ok').onclick = close;
+    };
+  }
+
+  function morning(b){
+    var d = V(b), items = [];
+    d.quiz.forEach(function(q){ items.push({t:'mc', label:t('lStory'), q:q.q, o:q.o, a:q.a}); });
+    d.lang.forEach(function(q){ items.push({t:'mc', label:d.lang_h, q:q.q, o:q.o, a:q.a}); });
+    d.mate.forEach(function(q){ items.push({t:'num', label:t('lNum'), q:q.q, a:String(q.a).trim()}); });
+    var k = 0, score = 0;
+    function show(){
+      if (k >= items.length){
+        var s = score >= 8 ? 3 : score >= 5 ? 2 : score >= 2 ? 1 : 0; st.game[b.slug] = Math.max(st.game[b.slug] || 0, s); save(); if (s >= 2){ confetti(); uiVoice('bravo'); }
+        open('<div class="center" style="padding-top:50px"><div style="font-size:100px;line-height:1" class="float">🌞</div><div class="starsrow">' + '⭐'.repeat(s) + '<span style="opacity:.3">' + '⭐'.repeat(3-s) + '</span></div><h2>' + t(s === 3 ? 'g3' : s === 2 ? 'g2' : 'g1') + '</h2><p>' + score + ' ' + (score === 1 ? t('r1') : t('rN')) + ' ' + items.length + '</p><button id="ok">' + t('done') + ' ☀️</button></div>', true);
+        $('ok').onclick = close; return;
+      }
+      var it = items[k];
+      var h = '<div class="bar">' + X() + '<span class="pill" style="background:#fff;font-size:14px">' + esc(it.label) + ' · ' + (k+1) + '/' + items.length + '</span><span style="width:48px"></span></div><div class="qcard"><p class="big">' + esc(it.q) + '</p></div>';
+      if (it.t === 'mc') h += '<div class="opts">' + it.o.map(function(o, j){ return '<button data-o="' + j + '">' + esc(o) + '</button>'; }).join('') + '</div>';
+      else h += '<div class="numpad">' + Array.from({length:20}, function(_, n){ return '<button data-n="' + n + '">' + n + '</button>'; }).join('') + '</div>';
+      h += '<p class="fb" id="fb"></p>';
+      open(h, true);
+      $('x').onclick = close;
+      function next(ok){ if (ok){ score++; blip(990, 0.18); } var fb = $('fb'); fb.textContent = ok ? '✨ ' + t('ok') : t('was') + (it.t === 'mc' ? it.o[it.a] : it.a); fb.style.color = ok ? '#22a07a' : '#c2456a'; setTimeout(function(){ k++; show(); }, 1200); }
+      if (it.t === 'mc') document.querySelectorAll('[data-o]').forEach(function(el){ el.onclick = function(){ var ok = +el.dataset.o === it.a; document.querySelectorAll('[data-o]').forEach(function(x){ x.disabled = true; if (+x.dataset.o === it.a) x.className = 'ok'; else if (x === el) x.className = 'no'; }); next(ok); }; });
+      else document.querySelectorAll('[data-n]').forEach(function(el){ el.onclick = function(){ var ok = el.dataset.n === it.a; document.querySelectorAll('[data-n]').forEach(function(x){ x.disabled = true; }); el.style.background = ok ? '#c8f2e4' : '#ffd5df'; next(ok); }; });
+    }
+    show();
+  }
+
+  function loading(msg){ $('app').innerHTML = '<div class="center" style="padding-top:60px">' + moon('happy', 'float') + '<h2>' + msg + '</h2></div>'; }
+  function getJSON(u){ return fetch(u, {cache:'no-cache'}).then(function(r){ if (!r.ok) throw new Error(u); return r.json(); }); }
+  loading('🌙 …');
+  getJSON('indice.json').then(function(ix){
+    return Promise.all(ix.libri.map(function(s){ return getJSON(BASE + s + '/libro_app.json').catch(function(){ return null; }); }));
+  }).then(function(list){
+    BOOKS = list.filter(function(b){ return b && b.v && Object.keys(b.v).length; });
+    BOOKS.forEach(function(b){ Object.keys(b.v).forEach(function(k){ var c = LN[k.split('_')[1]]; if (!c) return; b.v[k].pagine.forEach(function(p, i){ var key = c.code + '|' + p.w; if (!AUDW[key]) AUDW[key] = BASE + b.slug + '/parole/' + c.code + '_' + (i+1) + '.m4a'; }); }); });
+    if (!BOOKS.length){ loading('Nessuna storia ancora 🌙'); return; }
+    if (!LN[st.story]) st.story = 'ITA'; if (!LN[st.word] || st.word === st.story) st.word = st.story === 'ING' ? 'ITA' : 'ING';
+    draw(); if (!st.guida) guide(0);
+  }).catch(function(){ loading('Non riesco a caricare le storie. Controlla la connessione 🌙'); });
+})();
+</script>
+
+</body>
+</html>
