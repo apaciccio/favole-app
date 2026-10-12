@@ -483,6 +483,10 @@ var BASE = 'libri/';
 
   function loading(msg){ $('app').innerHTML = '<div class="center" style="padding-top:60px">' + moon('happy', 'float') + '<h2>' + msg + '</h2></div>'; }
   function getJSON(u){ return fetch(u, {cache:'no-cache'}).then(function(r){ if (!r.ok) throw new Error(u); return r.json(); }); }
+  var VERSIONE = '434ca2e4bb';
+  fetch('versione.json?t=' + Date.now(), {cache:'no-store'}).then(function(r){ return r.json(); }).then(function(v){
+    if (v && v.v && VERSIONE.indexOf('__') < 0 && v.v !== VERSIONE && location.search.indexOf('v=' + v.v) < 0) location.replace(location.pathname + '?v=' + v.v);
+  }).catch(function(){});
   loading('🌙 …');
   getJSON('indice.json').then(function(ix){
     return Promise.all(ix.libri.map(function(s){ return getJSON(BASE + s + '/libro_app.json').catch(function(){ return null; }); }));
