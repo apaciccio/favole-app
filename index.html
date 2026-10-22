@@ -269,9 +269,10 @@ var BASE = 'libri/';
   function t(k, vars){ var s = TX[ui()][k]; if (vars) Object.keys(vars).forEach(function(v){ s = s.replace('{' + v + '}', vars[v]); }); return s; }
   function ver(){ return st.story + '_' + st.word; }
   function V(b){ return b.v[ver()] || b.v.ITA_ING || b.v[Object.keys(b.v)[0]]; }
-  function img(b, i){ return BASE + b.slug + '/p' + i + '.jpg'; }
-  function wordAud(w){ return AUDW[LN[st.word].code + '|' + w] || ''; }
-  function narr(b, i){ var c = LN[st.story].code; return (b.voce || []).indexOf(c) >= 0 ? BASE + b.slug + '/voce/' + c + '_' + i + '.m4a' : ''; }
+  function root(b){ return b.base || (BASE + b.slug + '/'); }
+  function img(b, i){ return root(b) + 'p' + i + '.jpg'; }
+  function wordAud(w){ var k = LN[st.word].code + '|' + w; if (AUDW[k]) return AUDW[k]; for (var c in AUDW){ if (c.slice(c.indexOf('|') + 1) === w) return AUDW[c]; } return ''; }
+  function narr(b, i){ var c = b.personal ? b.story_lang : LN[st.story].code; return (b.voce || []).indexOf(c) >= 0 ? root(b) + 'voce/' + c + '_' + i + '.m4a' : ''; }
   function dkey(d){ return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate(); }
   function streak(){ var n = 0, d = new Date(); while (st.nights.indexOf(dkey(d)) >= 0){ n++; d.setDate(d.getDate()-1); } return n; }
   function tonight(){ var ok = BOOKS.filter(unlocked); if (!ok.length) ok = BOOKS; return ok.find(function(x){ return st.read.indexOf(x.slug) < 0; }) || ok[st.read.length % ok.length]; } function _oldTonight(){ return BOOKS[st.read.length % BOOKS.length]; }
@@ -341,7 +342,7 @@ var BASE = 'libri/';
   if (st.remind === undefined) st.remind = true;
   if (st.mq === undefined) st.mq = true;
   st.owned = st.owned || []; st.packs = st.packs || [];
-  function unlocked(b){ return GRATIS.indexOf(b.slug) >= 0 || st.sub || st.owned.indexOf(b.slug) >= 0 || st.packs.indexOf(b.cat) >= 0; }
+  function unlocked(b){ return b.personal || GRATIS.indexOf(b.slug) >= 0 || st.sub || st.owned.indexOf(b.slug) >= 0 || st.packs.indexOf(b.cat) >= 0; }
   function catInfo(c){ var x = CATS.find(function(k){ return k[0] === c; }); return x ? {ico:x[1], name:x[2][ui()]} : {ico:'✨', name:c}; }
   function bedTxt(){
     var pr = (st.bed || '20:30').split(':'), now = new Date(), tt = new Date(); tt.setHours(+pr[0], +pr[1] || 0, 0, 0);
@@ -406,6 +407,7 @@ var BASE = 'libri/';
   }
   var CATS = [
     ['tutte','🌈',{it:'Tutte',en:'All',es:'Todos',fr:'Toutes'}],
+    ['personale','⭐',{it:'Le mie favole',en:'My stories',es:'Mis cuentos',fr:'Mes histoires'}],
     ['amicizia','🤝',{it:'Amicizia',en:'Friendship',es:'Amistad',fr:'Amitié'}],
     ['coraggio','🦁',{it:'Coraggio',en:'Courage',es:'Valentía',fr:'Courage'}],
     ['emozioni','💗',{it:'Emozioni',en:'Feelings',es:'Emociones',fr:'Émotions'}],
@@ -414,7 +416,9 @@ var BASE = 'libri/';
     ['natura','🐾',{it:'Natura e animali',en:'Nature & animals',es:'Naturaleza y animales',fr:'Nature et animaux'}],
     ['avventura','✨',{it:'Avventura e magia',en:'Adventure & magic',es:'Aventura y magia',fr:'Aventure et magie'}],
     ['imparare','🎒',{it:'Scuola e curiosità',en:'School & curiosity',es:'Escuela y curiosidad',fr:'École et curiosité'}],
-    ['nanna','😴',{it:'Nanna tranquilla',en:'Calm sleepy time',es:'Hora de dormir',fr:'Dodo tout doux'}]
+    ['nanna','😴',{it:'Nanna tranquilla',en:'Sleepy time',es:'Hora de dormir',fr:'Dodo tout doux'}],
+    ['natale','🎄',{it:'Natale',en:'Christmas',es:'Navidad',fr:'Noël'}],
+    ['inverno','❄️',{it:'Inverno',en:'Winter',es:'Invierno',fr:'Hiver'}]
   ];
   var cat = 'tutte';
   function lib(){
@@ -520,8 +524,8 @@ var BASE = 'libri/';
   function read(b, i){
     stop(); var d = V(b);
     if (i < 0){
-      open('<div class="bar">' + X() + '</div><div class="center">' + moon('happy', 'float') + '<h2>' + t('forYou', {n:esc(st.name)}) + ' ' + st.avatar + '</h2>' +
-        '<p>' + t('intro', {l:LN[st.word][ui()].toLowerCase()}) + '</p><button id="next" style="font-size:20px;padding:16px 30px">' + t('start') + ' ✨</button></div>');
+      open('<div class="bar">' + X() + '</div><div class="center">' + moon('happy', 'float') + '<h2>' + t('forYou', {n:esc(b.personal ? b.name : st.name)}) + ' ' + (b.personal ? '⭐' : st.avatar) + '</h2>' +
+        '<p>' + t('intro', {l:LN[b.personal ? ({it:'ITA', en:'ING', es:'SP', fr:'FR'}[b.word_lang] || st.word) : st.word][ui()].toLowerCase()}) + '</p><button id="next" style="font-size:20px;padding:16px 30px">' + t('start') + ' ✨</button></div>');
       $('x').onclick = close; $('next').onclick = function(){ uiVoice('via'); read(b, 0); }; return;
     }
     if (i >= d.pagine.length){ end(b); return; }
@@ -542,13 +546,15 @@ var BASE = 'libri/';
   }
 
   function end(b){
-    var d = V(b), qs = d.quiz.slice(0, 2);
+    var d = V(b), qs = d.quiz.slice(0, 2), nm = b.personal ? b.name : st.name;
     open('<div class="bar">' + X() + '<span style="font:700 18px var(--display);color:#fff">' + t('theEnd') + ' 🌟</span><span style="width:48px"></span></div>' +
       '<div class="qcard"><h3>💛 ' + t('moral') + '</h3><p>' + esc(d.morale) + '</p></div>' +
-      qs.map(function(q, k){ return '<div class="qcard"><h3>💭 ' + t('q', {n:esc(st.name)}) + '</h3><p>' + esc(q.q) + '</p><button class="soft reveal" data-a="' + k + '">' + t('reveal') + '</button><span class="ans" id="a' + k + '" hidden>' + esc(q.o[q.a]) + ' ✓</span></div>'; }).join('') +
+      qs.map(function(q, k){ return '<div class="qcard"><h3>💭 ' + t('q', {n:esc(nm)}) + '</h3><p>' + esc(q.q) + '</p><button class="soft reveal" data-a="' + k + '">' + t('reveal') + '</button><span class="ans" id="a' + k + '" hidden>' + esc(q.o[q.a]) + ' ✓</span></div>'; }).join('') +
       '<div class="qcard"><h3>🎁 ' + t('tStk') + '</h3><div class="wbar">' + d.pagine.map(function(p, i){ return '<button class="wb ' + cIdx(i) + '" data-w="' + i + '" style="border:0;padding:8px 13px">' + esc(p.w) + '</button>'; }).join('') + '</div></div>' +
-      '<button id="night" style="font-size:21px;padding:18px">' + t('gn', {n:esc(st.name)}) + ' 🌙</button>');
+      (b.personal ? '<button class="soft" id="pdf" style="margin-bottom:10px">🖨️ PDF</button>' : '') +
+      '<button id="night" style="font-size:21px;padding:18px">' + t('gn', {n:esc(nm)}) + ' 🌙</button>');
     $('x').onclick = close;
+    if (b.personal) $('pdf').onclick = function(){ gate(function(){ window.open(root(b) + 'favola.pdf', '_blank', 'noopener'); end(b); }); };
     document.querySelectorAll('[data-a]').forEach(function(el){ el.onclick = function(){ $('a' + el.dataset.a).hidden = false; el.hidden = true; }; });
     document.querySelectorAll('#lin [data-w]').forEach(function(el){ el.onclick = function(){ play(wordAud(d.pagine[+el.dataset.w].w)); pop(el); }; });
     $('night').onclick = function(){
@@ -558,7 +564,7 @@ var BASE = 'libri/';
       if (st.nights.indexOf(dkey(new Date())) < 0) st.nights.push(dkey(new Date()));
       save(); confetti(); uiVoice('nanna');
       var sk = streak();
-      open('<div class="center" style="padding-top:56px"><div style="position:relative">' + moon('sleep', 'float') + '<span class="zz" style="right:6px;top:10px">z</span><span class="zz" style="right:-8px;top:0;animation-delay:.8s">Z</span></div><h2>' + t('sweet', {n:esc(st.name)}) + '</h2><p>' + t('plus', {x:myWords().length - before}) + ' ⭐<br>' + sk + ' ' + (sk === 1 ? t('night1') : t('nightN')) + ' 🔥</p><p>' + t('bfast') + ' ☀️</p><button id="ok">' + t('nanna') + ' 💤</button></div>');
+      open('<div class="center" style="padding-top:56px"><div style="position:relative">' + moon('sleep', 'float') + '<span class="zz" style="right:6px;top:10px">z</span><span class="zz" style="right:-8px;top:0;animation-delay:.8s">Z</span></div><h2>' + t('sweet', {n:esc(nm)}) + '</h2><p>' + t('plus', {x:myWords().length - before}) + ' ⭐<br>' + sk + ' ' + (sk === 1 ? t('night1') : t('nightN')) + ' 🔥</p><p>' + t('bfast') + ' ☀️</p><button id="ok">' + t('nanna') + ' 💤</button></div>');
       $('ok').onclick = close;
     };
   }
@@ -591,20 +597,30 @@ var BASE = 'libri/';
 
   function loading(msg){ $('app').innerHTML = '<div class="center" style="padding-top:60px">' + moon('happy', 'float') + '<h2>' + msg + '</h2></div>'; }
   function getJSON(u){ return fetch(u, {cache:'no-cache'}).then(function(r){ if (!r.ok) throw new Error(u); return r.json(); }); }
-  var VERSIONE = 'de7589d49e';
+  var VERSIONE = 'a0876383ca';
   fetch('versione.json?t=' + Date.now(), {cache:'no-store'}).then(function(r){ return r.json(); }).then(function(v){
     if (v && v.v && VERSIONE.indexOf('__') < 0 && v.v !== VERSIONE && location.search.indexOf('v=' + v.v) < 0) location.replace(location.pathname + '?v=' + v.v);
   }).catch(function(){});
   loading('🌙 …');
+  // personal stories ("La sua favola"): opened from the link in the email, ?mia=<folder url>
+  var MIA_OK = /^https:\/\/storage\.googleapis\.com\/[a-z0-9._-]+\/b\/[A-Za-z0-9_-]{16,}\/$/;
+  var newMia = null;
+  try { var q = new URLSearchParams(location.search).get('mia'); if (q && MIA_OK.test(q)){ newMia = q; st.mine = st.mine || []; if (st.mine.indexOf(q) < 0) st.mine.unshift(q); save(); }
+    if (q) history.replaceState(null, '', location.pathname); } catch (e) {}
+  function mine(){ return Promise.all((st.mine || []).filter(function(u){ return MIA_OK.test(u); }).map(function(u){
+    return getJSON(u + 'libro_app.json').then(function(b){ b.base = u; b.personal = true; return b; }).catch(function(){ return null; }); })); }
   getJSON('indice.json').then(function(ix){
     GRATIS = ix.gratis || ix.libri.slice(-3);
-    return Promise.all(ix.libri.map(function(s){ return getJSON(BASE + s + '/libro_app.json').catch(function(){ return null; }); }));
+    return Promise.all([mine()].concat(ix.libri.map(function(s){ return getJSON(BASE + s + '/libro_app.json').catch(function(){ return null; }); })));
   }).then(function(list){
+    list = (list[0] || []).concat(list.slice(1));
     BOOKS = list.filter(function(b){ return b && b.v && Object.keys(b.v).length; });
-    BOOKS.forEach(function(b){ Object.keys(b.v).forEach(function(k){ var c = LN[k.split('_')[1]]; if (!c) return; b.v[k].pagine.forEach(function(p, i){ var key = c.code + '|' + p.w; if (!AUDW[key]) AUDW[key] = BASE + b.slug + '/parole/' + c.code + '_' + (i+1) + '.m4a'; }); }); });
+    BOOKS.forEach(function(b){ Object.keys(b.v).forEach(function(k){ var c = LN[k.split('_')[1]]; if (!c) return; b.v[k].pagine.forEach(function(p, i){ var key = c.code + '|' + p.w; if (!AUDW[key]) AUDW[key] = root(b) + 'parole/' + c.code + '_' + (i+1) + '.m4a'; }); }); });
     if (!BOOKS.length){ loading('Nessuna storia ancora 🌙'); return; }
     if (!LN[st.story]) st.story = 'ITA'; if (!LN[st.word] || st.word === st.story) st.word = st.story === 'ING' ? 'ITA' : 'ING';
-    draw(); if (!st.guida) guide(0);
+    draw();
+    var opened = newMia && BOOKS.find(function(b){ return b.base === newMia; });
+    if (opened){ st.guida = st.guida || 1; save(); read(opened, -1); } else if (!st.guida) guide(0);
   }).catch(function(){ loading('Non riesco a caricare le storie. Controlla la connessione 🌙'); });
 })();
 </script>
